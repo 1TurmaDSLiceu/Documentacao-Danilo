@@ -1,73 +1,90 @@
-import { StyleSheet, View, Text, Button, Image } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { usePowerState } from 'expo-battery';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function MyPager() {
-    const { lowPowerMode, batteryLevel, batteryState } = usePowerState();
+    const { batteryLevel, batteryState } = usePowerState();
 
-    console.log("teste");
+    let buttonColor = 'green';
+    if (batteryLevel > 0.6) {
+        buttonColor = 'green';
+    } else if (batteryLevel <= 0.60 && batteryLevel > 0.25) {
+        buttonColor = 'yellow';
+    } else {
+        buttonColor = 'red';
+    }
 
     return (
-        <View style={styles.container}>
-            <PagerView style={styles.container} initialPage={0}>
-                {/* Página 1: Informações sobre o nível de bateria */}
+        
+            <PagerView style={styles.pager} initialPage={0}>
                 <View style={styles.page} key="1">
-                    <Text style={styles.title}>Nível de Bateria</Text>
-                    <View style={styles.batteryLevel}>
-                        <Text style={styles.batteryText}>
-                            {batteryLevel !== null ? `${(batteryLevel * 100).toFixed(0)}%` : 'Carregando...'}
-                        </Text>
-                    </View>
-                  
+                    {batteryState === 0 && (
+                        <>
+                            <MaterialIcons name="battery-unknown" size={50} color="black" />
+                            <Text style={styles.subtitulo}>Desconhecido</Text>
+                        </>
+                    )}
                 </View>
-
-                {/* Página 2: Exemplo de botão */}
                 <View style={styles.page} key="2">
-                    <Text style={styles.title}>Página 2</Text>
-                    <Text>
-                        Modo de Economia de Energia: {lowPowerMode ? 'Ativado' : 'Desativado'}
-                    </Text>
+                    {batteryState === 1 && (
+                        <>
+                            <MaterialIcons name="battery-4-bar" size={50} color="black" />
+                            <Text style={styles.subtitulo}>Desplugado</Text>
+                        </>
+                    )}
                 </View>
-
-                {/* Página 3: Exibição de imagem */}
                 <View style={styles.page} key="3">
-                    <Text style={styles.title}>Página 3</Text>
-                    <Image
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
-                        style={{ width: 100, height: 100 }}
-                    />
-                    <Text>Aqui está uma imagem simples para demonstrar!</Text>
+                    {batteryState === 2 && (
+                        <>
+                            <MaterialIcons name="battery-charging-full" size={50} color="black" />
+                            <Text style={styles.subtitulo}>Carregando</Text>
+                        </>
+                    )}
+                </View>
+                <View style={styles.page} key="4">
+                    {batteryState === 3 && (
+                        <>
+                            <MaterialIcons name="battery-full" size={50} color="black" />
+                            <Text style={styles.subtitulo}>Completa</Text>
+                        </>
+                    )}
                 </View>
             </PagerView>
-        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pager: {
+        flex: 1,
+        width: '100%',
     },
     page: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    batteryLevel: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        width: '30%',
-        height: 100,
-        borderColor: 'gray',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Fundo levemente transparente
         borderRadius: 10,
+        padding: 20,
+        margin: 10,
+        shadowColor: '#black',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
-    batteryText: {
-        color: 'black',
-        fontSize: 18,
+    subtitulo: {
+        fontSize: 20,
         fontWeight: 'bold',
+        color: 'black',
+        marginTop: 10,
     },
 });
