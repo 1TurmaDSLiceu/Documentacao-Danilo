@@ -1,10 +1,12 @@
 import { StyleSheet, View, Text } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { usePagerView } from 'react-native-pager-view';
 import { usePowerState } from 'expo-battery';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useEffect } from 'react';
 
 export default function MyPager() {
     const { batteryLevel, batteryState } = usePowerState();
+    const { ref, setPage } = usePagerView();
 
     let buttonColor = 'green';
     if (batteryLevel > 0.6) {
@@ -15,42 +17,57 @@ export default function MyPager() {
         buttonColor = 'red';
     }
 
+    useEffect(() => {
+        if(batteryState === 0){
+            setPage(0)
+        }
+        else if(batteryState === 1){
+            setPage(1)
+        }
+        else if(batteryState === 2){
+            setPage(2)
+        }
+        else {
+            setPage(3)
+        }
+    }, [batteryState])
+
     return (
-        
-            <PagerView style={styles.pager} initialPage={0}>
-                <View style={styles.page} key="1">
-                    {batteryState === 0 && (
-                        <>
-                            <MaterialIcons name="battery-unknown" size={50} color="black" />
-                            <Text style={styles.subtitulo}>Desconhecido</Text>
-                        </>
-                    )}
-                </View>
-                <View style={styles.page} key="2">
-                    {batteryState === 1 && (
-                        <>
-                            <MaterialIcons name="battery-4-bar" size={50} color="black" />
-                            <Text style={styles.subtitulo}>Desplugado</Text>
-                        </>
-                    )}
-                </View>
-                <View style={styles.page} key="3">
-                    {batteryState === 2 && (
-                        <>
-                            <MaterialIcons name="battery-charging-full" size={50} color="black" />
-                            <Text style={styles.subtitulo}>Carregando</Text>
-                        </>
-                    )}
-                </View>
-                <View style={styles.page} key="4">
-                    {batteryState === 3 && (
-                        <>
-                            <MaterialIcons name="battery-full" size={50} color="black" />
-                            <Text style={styles.subtitulo}>Completa</Text>
-                        </>
-                    )}
-                </View>
-            </PagerView>
+
+        <PagerView style={styles.pager} initialPage={0} ref={ref}>
+            <View style={styles.page} key="1">
+                {batteryState === 0 && (
+                    <>
+                        <MaterialIcons name="battery-unknown" size={50} color="white" />
+                        <Text style={styles.subtitulo}>Desconhecido</Text>
+                    </>
+                )}
+            </View>
+            <View style={styles.page} key="2">
+                {batteryState === 1 && (
+                    <>
+                        <MaterialIcons name="battery-4-bar" size={50} color="white" />
+                        <Text style={styles.subtitulo}>Desplugado</Text>
+                    </>
+                )}
+            </View>
+            <View style={styles.page} key="3">
+                {batteryState === 2 && (
+                    <>
+                        <MaterialIcons name="battery-charging-full" size={50} color="green" />
+                        <Text style={styles.subtitulo}>Carregando</Text>
+                    </>
+                )}
+            </View>
+            <View style={styles.page} key="4">
+                {batteryState === 3 && (
+                    <>
+                        <MaterialIcons name="battery-full" size={50} color="white" />
+                        <Text style={styles.subtitulo}>Completa</Text>
+                    </>
+                )}
+            </View>
+        </PagerView>
     );
 }
 
@@ -68,7 +85,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Fundo levemente transparente
+        backgroundColor: 'rgb(236, 177, 90)', // Fundo levemente transparente
         borderRadius: 10,
         padding: 20,
         margin: 10,
